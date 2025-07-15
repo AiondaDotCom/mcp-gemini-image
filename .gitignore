@@ -40,3 +40,7 @@ pids
 # Temporary files
 *.tmp
 *.temp
+
+# DXT packages (should be released via GitHub)
+dxt-package/
+*.dxt
