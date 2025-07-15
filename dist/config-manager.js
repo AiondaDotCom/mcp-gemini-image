@@ -1,9 +1,9 @@
 import { promises as fs } from 'fs';
 import { join, dirname } from 'path';
-// Simple approach - use working directory based config
+// Get config directory - use __dirname equivalent for ESM or fallback
 const getConfigDir = () => {
-    // In production, this will be in dist/ directory
-    // In tests, we can control this via mocking
+    // Use process.cwd() based approach for better compatibility
+    // This works in both test and production environments
     return join(process.cwd(), 'dist', 'config');
 };
 export class ConfigManager {
@@ -57,29 +57,34 @@ export class ConfigManager {
     }
     async loadConfig() {
         try {
+            // Loading config from file
             const configData = await fs.readFile(this.configFilePath, 'utf-8');
             const savedConfig = JSON.parse(configData);
             if (savedConfig.apiKey) {
                 this.config.apiKey = savedConfig.apiKey;
+                // API key loaded successfully
             }
             if (savedConfig.projectId) {
                 this.config.projectId = savedConfig.projectId;
+                // Project ID loaded successfully
             }
         }
         catch (error) {
             // Config file doesn't exist or is invalid - use defaults
-            console.error('No config file found or invalid config, using defaults');
+            // Config file doesn't exist or is invalid - using defaults
         }
     }
     async saveConfig() {
         try {
+            // Saving config to file
             // Ensure config directory exists
             await fs.mkdir(dirname(this.configFilePath), { recursive: true });
             const configData = JSON.stringify(this.config, null, 2);
             await fs.writeFile(this.configFilePath, configData, 'utf-8');
+            // Config saved successfully
         }
         catch (error) {
-            console.error('Failed to save config file:', error);
+            // Failed to save config file
         }
     }
 }
