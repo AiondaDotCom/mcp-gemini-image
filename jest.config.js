@@ -9,11 +9,11 @@ export default {
       useESM: true
     }]
   },
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1'
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(@modelcontextprotocol)/)'
+    'node_modules/(?!(@modelcontextprotocol|@google)/)'
   ],
   collectCoverageFrom: [
     'src/**/*.ts',

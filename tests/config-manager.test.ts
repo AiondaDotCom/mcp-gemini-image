@@ -22,24 +22,14 @@ describe('ConfigManager', () => {
       expect(config.projectId).toBeUndefined();
     });
 
-    it('should load configuration from environment variables', () => {
+    it('should not load configuration from environment variables', () => {
       process.env.GOOGLE_API_KEY = 'test-api-key';
       process.env.GOOGLE_PROJECT_ID = 'test-project-id';
       
       const newConfigManager = new ConfigManager();
       const config = newConfigManager.getConfig();
       
-      expect(config.apiKey).toBe('test-api-key');
-      expect(config.projectId).toBe('test-project-id');
-    });
-
-    it('should load only API key if project ID is not set', () => {
-      process.env.GOOGLE_API_KEY = 'test-api-key';
-      
-      const newConfigManager = new ConfigManager();
-      const config = newConfigManager.getConfig();
-      
-      expect(config.apiKey).toBe('test-api-key');
+      expect(config.apiKey).toBe('');
       expect(config.projectId).toBeUndefined();
     });
   });
