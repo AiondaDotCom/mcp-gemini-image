@@ -17,10 +17,10 @@ The codebase follows a modular design with clear separation of concerns:
 - **Entry Point** (`index.ts`): Application bootstrap with signal handling
 
 The server exposes 4 MCP tools:
-1. `generate-image` - Main image generation with Imagen 4
-2. `configure-server` - Set API credentials
+1. `generate-image` - Main image generation with Imagen 4 (requires configuration)
+2. `configure-server` - Set API credentials (must be used first)
 3. `get-config-status` - Check configuration status
-4. `list-supported-models` - List available models
+4. `list-supported-models` - List available models (requires configuration)
 
 ## Common Commands
 
@@ -52,9 +52,11 @@ npm start             # Start the MCP server (requires build first)
 - TypeScript with strict mode enabled
 
 ### API Configuration
-The server requires Google API credentials to function. These can be set via:
-- Environment variables: `GOOGLE_API_KEY`, `GOOGLE_PROJECT_ID`
-- MCP tool: `configure-server` with `api_key` parameter
+The server requires Google API credentials to function. Configuration is handled through:
+- MCP tool: `configure-server` with `api_key` parameter (required)
+- Optional: `project_id` parameter for Google Cloud project ID
+- Credentials must be configured before using image generation tools
+- Tools `generate-image` and `list-supported-models` check for credentials and prompt for configuration if missing
 
 ### Image Storage
 Generated images are automatically saved to `~/Desktop/gemini-images/` with:

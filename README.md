@@ -30,20 +30,12 @@ A Model Context Protocol (MCP) server that provides Google Gemini image generati
 
 ## Configuration
 
-### Environment Variables
-
-You can set your Google API key using environment variables:
-
-```bash
-export GOOGLE_API_KEY="your-api-key-here"
-export GOOGLE_PROJECT_ID="your-project-id" # optional
-```
-
 ### API Key Setup
 
 1. Get a Google API key from the [Google Cloud Console](https://console.cloud.google.com/)
 2. Enable the Generative AI API for your project
-3. Use the `configure-server` tool to set your API key
+3. Start the MCP server
+4. Use the `configure-server` tool to set your API key before generating images
 
 ## Usage
 
