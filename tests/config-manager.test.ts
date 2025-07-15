@@ -116,7 +116,7 @@ describe('ConfigManager', () => {
       expect(status.configured).toBe(false);
       expect(status.apiKeySet).toBe(false);
       expect(status.projectIdSet).toBe(false);
-      expect(status.availableModels).toHaveLength(2);
+      expect(status.availableModels).toHaveLength(1);
     });
 
     it('should return correct status when only API key is set', () => {
@@ -126,7 +126,7 @@ describe('ConfigManager', () => {
       expect(status.configured).toBe(true);
       expect(status.apiKeySet).toBe(true);
       expect(status.projectIdSet).toBe(false);
-      expect(status.availableModels).toHaveLength(2);
+      expect(status.availableModels).toHaveLength(1);
     });
 
     it('should return correct status when both API key and project ID are set', () => {
@@ -136,7 +136,7 @@ describe('ConfigManager', () => {
       expect(status.configured).toBe(true);
       expect(status.apiKeySet).toBe(true);
       expect(status.projectIdSet).toBe(true);
-      expect(status.availableModels).toHaveLength(2);
+      expect(status.availableModels).toHaveLength(1);
     });
   });
 
@@ -144,20 +144,13 @@ describe('ConfigManager', () => {
     it('should return supported models', () => {
       const models = configManager.getSupportedModels();
       
-      expect(models).toHaveLength(2);
+      expect(models).toHaveLength(1);
       expect(models[0]).toEqual({
-        id: 'imagen-4.0-generate-preview-06-06',
-        name: 'Imagen 4 Standard',
-        description: 'Generate very detailed images with good lighting and improved text rendering',
+        id: 'gemini-2.0-flash-exp',
+        name: 'Gemini 2.0 Flash Experimental',
+        description: 'Generate high-quality images using Gemini 2.0 Flash experimental model with conversational image generation',
         maxImages: 4,
-        features: ['high-quality', 'detailed', 'good-lighting', 'text-rendering']
-      });
-      expect(models[1]).toEqual({
-        id: 'imagen-4.0-ultra-generate-preview-06-06',
-        name: 'Imagen 4 Ultra',
-        description: 'Premium version with enhanced quality and detail',
-        maxImages: 1,
-        features: ['ultra-high-quality', 'enhanced-detail', 'premium']
+        features: ['high-quality', 'conversational', 'multimodal', 'text-image', 'experimental']
       });
     });
   });

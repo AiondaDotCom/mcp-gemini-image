@@ -4,7 +4,7 @@ import { homedir } from 'os';
 export class FileManager {
     baseDir;
     constructor() {
-        this.baseDir = join(homedir(), 'Desktop', 'gemini-images');
+        this.baseDir = join(homedir(), 'Desktop');
     }
     async ensureDirectoryExists() {
         try {

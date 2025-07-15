@@ -40,18 +40,11 @@ export class ConfigManager {
   public getSupportedModels(): SupportedModel[] {
     return [
       {
-        id: 'imagen-4.0-generate-preview-06-06',
-        name: 'Imagen 4 Standard',
-        description: 'Generate very detailed images with good lighting and improved text rendering',
+        id: 'gemini-2.0-flash-exp',
+        name: 'Gemini 2.0 Flash Experimental',
+        description: 'Generate high-quality images using Gemini 2.0 Flash experimental model with conversational image generation',
         maxImages: 4,
-        features: ['high-quality', 'detailed', 'good-lighting', 'text-rendering']
-      },
-      {
-        id: 'imagen-4.0-ultra-generate-preview-06-06',
-        name: 'Imagen 4 Ultra',
-        description: 'Premium version with enhanced quality and detail',
-        maxImages: 1,
-        features: ['ultra-high-quality', 'enhanced-detail', 'premium']
+        features: ['high-quality', 'conversational', 'multimodal', 'text-image', 'experimental']
       }
     ];
   }

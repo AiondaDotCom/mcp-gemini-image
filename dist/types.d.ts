@@ -4,7 +4,7 @@ export interface GeminiConfig {
 }
 export interface ImageGenerationRequest {
     prompt: string;
-    model?: 'imagen-4.0-generate-preview-06-06' | 'imagen-4.0-ultra-generate-preview-06-06';
+    model?: 'gemini-2.0-flash-exp';
     aspect_ratio?: 'square' | 'portrait' | 'landscape';
     num_images?: number;
     person_generation?: 'dont_allow' | 'allow_adult' | 'allow_all';

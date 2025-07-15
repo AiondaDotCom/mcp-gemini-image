@@ -6,7 +6,7 @@ export class FileManager {
   private readonly baseDir: string;
 
   constructor() {
-    this.baseDir = join(homedir(), 'Desktop', 'gemini-images');
+    this.baseDir = join(homedir(), 'Desktop');
   }
 
   public async ensureDirectoryExists(): Promise<void> {

@@ -140,6 +140,21 @@ export class GeminiImageServer {
         ];
     }
     async handleGenerateImage(args) {
+        if (!this.configManager.isConfigured()) {
+            return {
+                content: [
+                    {
+                        type: 'text',
+                        text: 'Server is not configured. Please use the "configure-server" tool to set your Google API key before generating images.\n\n' +
+                            'Example usage:\n' +
+                            '{\n' +
+                            '  "api_key": "your-google-api-key-here",\n' +
+                            '  "project_id": "your-project-id" // optional\n' +
+                            '}',
+                    },
+                ],
+            };
+        }
         const request = {
             prompt: args.prompt,
             model: args.model,
@@ -196,6 +211,21 @@ export class GeminiImageServer {
         };
     }
     async handleListSupportedModels() {
+        if (!this.configManager.isConfigured()) {
+            return {
+                content: [
+                    {
+                        type: 'text',
+                        text: 'Server is not configured. Please use the "configure-server" tool to set your Google API key before listing models.\n\n' +
+                            'Example usage:\n' +
+                            '{\n' +
+                            '  "api_key": "your-google-api-key-here",\n' +
+                            '  "project_id": "your-project-id" // optional\n' +
+                            '}',
+                    },
+                ],
+            };
+        }
         const models = this.configManager.getSupportedModels();
         const modelList = models.map(model => `• ${model.name} (${model.id})\n` +
             `  Description: ${model.description}\n` +

@@ -129,7 +129,7 @@ describe('GeminiImageServer', () => {
         };
         
         mockImageGenerator.generateImage.mockResolvedValue(mockResult);
-        mockFileManager.getImageDirectory.mockReturnValue('/home/user/Desktop/gemini-images');
+        mockFileManager.getImageDirectory.mockReturnValue('/home/user/Desktop');
         
         const result = await toolHandler({
           method: 'tools/call',
@@ -262,7 +262,7 @@ describe('GeminiImageServer', () => {
         };
         
         mockConfigManager.getConfigStatus.mockReturnValue(mockStatus);
-        mockFileManager.getImageDirectory.mockReturnValue('/home/user/Desktop/gemini-images');
+        mockFileManager.getImageDirectory.mockReturnValue('/home/user/Desktop');
         
         const result = await toolHandler({
           method: 'tools/call',

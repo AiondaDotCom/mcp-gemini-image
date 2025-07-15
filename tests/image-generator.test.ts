@@ -67,7 +67,7 @@ describe('ImageGenerator', () => {
   describe('generateImage', () => {
     const mockRequest: ImageGenerationRequest = {
       prompt: 'Test prompt',
-      model: 'imagen-4.0-generate-preview-06-06',
+      model: 'gemini-2.0-flash-exp',
       aspect_ratio: 'square',
       num_images: 1,
       person_generation: 'allow_adult',
@@ -97,7 +97,7 @@ describe('ImageGenerator', () => {
       
       expect(mockConfigManager.validateConfig).toHaveBeenCalled();
       expect(mockGoogleGenerativeAI.getGenerativeModel).toHaveBeenCalledWith({
-        model: 'imagen-4.0-generate-preview-06-06'
+        model: 'gemini-2.0-flash-exp'
       });
       expect(mockGenerativeModel.generateContent).toHaveBeenCalledWith({
         contents: [{
@@ -105,16 +105,14 @@ describe('ImageGenerator', () => {
           parts: [{ text: 'Test prompt' }]
         }],
         generationConfig: {
-          responseModalities: ['TEXT', 'IMAGE'],
-          aspectRatio: '1:1',
-          personGeneration: 'allow_adult'
+          responseModalities: ['TEXT', 'IMAGE']
         }
       });
       expect(mockFileManager.saveImages).toHaveBeenCalledWith(
         ['base64-image-data'],
         'test-image',
         {
-          model: 'imagen-4.0-generate-preview-06-06',
+          model: 'gemini-2.0-flash-exp',
           prompt: 'Test prompt',
           aspect_ratio: 'square',
           num_images: 1,
@@ -126,7 +124,7 @@ describe('ImageGenerator', () => {
         images: ['base64-image-data'],
         filePaths: ['/path/to/image1.png'],
         metadata: {
-          model: 'imagen-4.0-generate-preview-06-06',
+          model: 'gemini-2.0-flash-exp',
           prompt: 'Test prompt',
           aspect_ratio: 'square',
           num_images: 1,
@@ -142,7 +140,7 @@ describe('ImageGenerator', () => {
       await imageGenerator.generateImage(requestWithoutModel);
       
       expect(mockGoogleGenerativeAI.getGenerativeModel).toHaveBeenCalledWith({
-        model: 'imagen-4.0-generate-preview-06-06'
+        model: 'gemini-2.0-flash-exp'
       });
     });
 
@@ -175,49 +173,35 @@ describe('ImageGenerator', () => {
           parts: [{ text: 'Test prompt' }]
         }],
         generationConfig: {
-          responseModalities: ['TEXT', 'IMAGE'],
-          numberOfImages: 2,
-          aspectRatio: '1:1',
-          personGeneration: 'allow_adult'
+          responseModalities: ['TEXT', 'IMAGE']
         }
       });
       
       expect(result.images).toEqual(['image1-data', 'image2-data']);
     });
 
-    it('should map aspect ratios correctly', async () => {
+    it('should generate image with simplified config', async () => {
       const portraitRequest = { ...mockRequest, aspect_ratio: 'portrait' as const };
       await imageGenerator.generateImage(portraitRequest);
       
       expect(mockGenerativeModel.generateContent).toHaveBeenCalledWith(
         expect.objectContaining({
-          generationConfig: expect.objectContaining({
-            aspectRatio: '3:4'
-          })
-        })
-      );
-      
-      const landscapeRequest = { ...mockRequest, aspect_ratio: 'landscape' as const };
-      await imageGenerator.generateImage(landscapeRequest);
-      
-      expect(mockGenerativeModel.generateContent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          generationConfig: expect.objectContaining({
-            aspectRatio: '4:3'
-          })
+          generationConfig: {
+            responseModalities: ['TEXT', 'IMAGE']
+          }
         })
       );
     });
 
-    it('should validate number of images for ultra model', async () => {
-      const ultraRequest = {
+    it('should validate number of images for gemini model', async () => {
+      const geminiRequest = {
         ...mockRequest,
-        model: 'imagen-4.0-ultra-generate-preview-06-06' as const,
-        num_images: 2
+        model: 'gemini-2.0-flash-exp' as const,
+        num_images: 5
       };
       
-      await expect(imageGenerator.generateImage(ultraRequest)).rejects.toThrow(
-        'Number of images must be between 1 and 1 for model imagen-4.0-ultra-generate-preview-06-06'
+      await expect(imageGenerator.generateImage(geminiRequest)).rejects.toThrow(
+        'Number of images must be between 1 and 4 for model gemini-2.0-flash-exp'
       );
     });
 
@@ -228,7 +212,7 @@ describe('ImageGenerator', () => {
       };
       
       await expect(imageGenerator.generateImage(invalidRequest)).rejects.toThrow(
-        'Number of images must be between 1 and 4 for model imagen-4.0-generate-preview-06-06'
+        'Number of images must be between 1 and 4 for model gemini-2.0-flash-exp'
       );
     });
 
@@ -307,13 +291,11 @@ describe('ImageGenerator', () => {
     it('should validate number of images for different models', () => {
       const generator = imageGenerator as any;
       
-      expect(generator.validateNumImages(1, 'imagen-4.0-generate-preview-06-06')).toBe(1);
-      expect(generator.validateNumImages(4, 'imagen-4.0-generate-preview-06-06')).toBe(4);
-      expect(generator.validateNumImages(1, 'imagen-4.0-ultra-generate-preview-06-06')).toBe(1);
+      expect(generator.validateNumImages(1, 'gemini-2.0-flash-exp')).toBe(1);
+      expect(generator.validateNumImages(4, 'gemini-2.0-flash-exp')).toBe(4);
       
-      expect(() => generator.validateNumImages(5, 'imagen-4.0-generate-preview-06-06')).toThrow();
-      expect(() => generator.validateNumImages(2, 'imagen-4.0-ultra-generate-preview-06-06')).toThrow();
-      expect(() => generator.validateNumImages(0, 'imagen-4.0-generate-preview-06-06')).toThrow();
+      expect(() => generator.validateNumImages(5, 'gemini-2.0-flash-exp')).toThrow();
+      expect(() => generator.validateNumImages(0, 'gemini-2.0-flash-exp')).toThrow();
     });
   });
 

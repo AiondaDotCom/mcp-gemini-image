@@ -22,17 +22,14 @@ export class ImageGenerator {
         if (!this.genAI) {
             throw new Error('Google Generative AI client not initialized');
         }
-        const model = request.model || 'imagen-4.0-generate-preview-06-06';
+        const model = request.model || 'gemini-2.0-flash-exp';
         const numImages = this.validateNumImages(request.num_images || 1, model);
         try {
             const generativeModel = this.genAI.getGenerativeModel({
                 model: model
             });
             const generationConfig = {
-                responseModalities: ['TEXT', 'IMAGE'],
-                ...(numImages > 1 && { numberOfImages: numImages }),
-                ...(request.aspect_ratio && { aspectRatio: this.mapAspectRatio(request.aspect_ratio) }),
-                ...(request.person_generation && { personGeneration: request.person_generation })
+                responseModalities: ['TEXT', 'IMAGE']
             };
             const result = await generativeModel.generateContent({
                 contents: [{

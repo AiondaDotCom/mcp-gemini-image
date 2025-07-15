@@ -34,7 +34,7 @@ describe('FileManager', () => {
   describe('constructor', () => {
     it('should initialize with correct base directory', () => {
       expect(mockHomedir).toHaveBeenCalled();
-      expect(mockJoin).toHaveBeenCalledWith('/home/user', 'Desktop', 'gemini-images');
+      expect(mockJoin).toHaveBeenCalledWith('/home/user', 'Desktop');
     });
   });
 
@@ -44,7 +44,7 @@ describe('FileManager', () => {
       
       await fileManager.ensureDirectoryExists();
       
-      expect(mockFs.mkdir).toHaveBeenCalledWith('/home/user/Desktop/gemini-images', { recursive: true });
+      expect(mockFs.mkdir).toHaveBeenCalledWith('/home/user/Desktop', { recursive: true });
     });
 
     it('should throw error when directory creation fails', async () => {
@@ -52,7 +52,7 @@ describe('FileManager', () => {
       mockFs.mkdir.mockRejectedValue(error);
       
       await expect(fileManager.ensureDirectoryExists()).rejects.toThrow(
-        'Failed to create directory: /home/user/Desktop/gemini-images'
+        'Failed to create directory: /home/user/Desktop'
       );
     });
   });
@@ -74,12 +74,12 @@ describe('FileManager', () => {
     it('should save image with generated filename', async () => {
       const filePath = await fileManager.saveImage(mockImageData);
       
-      expect(mockFs.mkdir).toHaveBeenCalledWith('/home/user/Desktop/gemini-images', { recursive: true });
+      expect(mockFs.mkdir).toHaveBeenCalledWith('/home/user/Desktop', { recursive: true });
       expect(mockFs.writeFile).toHaveBeenCalledWith(
-        '/home/user/Desktop/gemini-images/gemini-image-2023-01-01T00-00-00-000Z.png',
+        '/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png',
         Buffer.from(mockImageData, 'base64')
       );
-      expect(filePath).toBe('/home/user/Desktop/gemini-images/gemini-image-2023-01-01T00-00-00-000Z.png');
+      expect(filePath).toBe('/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png');
     });
 
     it('should save image with custom filename', async () => {
@@ -87,10 +87,10 @@ describe('FileManager', () => {
       const filePath = await fileManager.saveImage(mockImageData, customFilename);
       
       expect(mockFs.writeFile).toHaveBeenCalledWith(
-        '/home/user/Desktop/gemini-images/custom-image.png',
+        '/home/user/Desktop/custom-image.png',
         Buffer.from(mockImageData, 'base64')
       );
-      expect(filePath).toBe('/home/user/Desktop/gemini-images/custom-image.png');
+      expect(filePath).toBe('/home/user/Desktop/custom-image.png');
     });
 
     it('should save image with metadata', async () => {
@@ -99,14 +99,14 @@ describe('FileManager', () => {
       
       expect(mockFs.writeFile).toHaveBeenCalledTimes(2);
       expect(mockFs.writeFile).toHaveBeenCalledWith(
-        '/home/user/Desktop/gemini-images/gemini-image-2023-01-01T00-00-00-000Z.png',
+        '/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png',
         Buffer.from(mockImageData, 'base64')
       );
       expect(mockFs.writeFile).toHaveBeenCalledWith(
-        '/home/user/Desktop/gemini-images/gemini-image-2023-01-01T00-00-00-000Z.png.json',
+        '/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png.json',
         JSON.stringify(metadata, null, 2)
       );
-      expect(filePath).toBe('/home/user/Desktop/gemini-images/gemini-image-2023-01-01T00-00-00-000Z.png');
+      expect(filePath).toBe('/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png');
     });
 
     it('should throw error when image saving fails', async () => {
@@ -123,7 +123,7 @@ describe('FileManager', () => {
       mockFs.mkdir.mockRejectedValue(error);
       
       await expect(fileManager.saveImage(mockImageData)).rejects.toThrow(
-        'Failed to create directory: /home/user/Desktop/gemini-images'
+        'Failed to create directory: /home/user/Desktop'
       );
     });
   });
@@ -196,7 +196,7 @@ describe('FileManager', () => {
     it('should return correct image directory', () => {
       const directory = fileManager.getImageDirectory();
       
-      expect(directory).toBe('/home/user/Desktop/gemini-images');
+      expect(directory).toBe('/home/user/Desktop');
     });
   });
 });
