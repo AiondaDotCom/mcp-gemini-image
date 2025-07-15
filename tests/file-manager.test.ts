@@ -93,18 +93,14 @@ describe('FileManager', () => {
       expect(filePath).toBe('/home/user/Desktop/custom-image.png');
     });
 
-    it('should save image with metadata', async () => {
+    it('should save image with metadata (metadata not saved to file)', async () => {
       const metadata = { prompt: 'test prompt', model: 'test-model' };
       const filePath = await fileManager.saveImage(mockImageData, undefined, metadata);
       
-      expect(mockFs.writeFile).toHaveBeenCalledTimes(2);
+      expect(mockFs.writeFile).toHaveBeenCalledTimes(1);
       expect(mockFs.writeFile).toHaveBeenCalledWith(
         '/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png',
         Buffer.from(mockImageData, 'base64')
-      );
-      expect(mockFs.writeFile).toHaveBeenCalledWith(
-        '/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png.json',
-        JSON.stringify(metadata, null, 2)
       );
       expect(filePath).toBe('/home/user/Desktop/gemini-image-2023-01-01T00-00-00-000Z.png');
     });
@@ -155,7 +151,7 @@ describe('FileManager', () => {
       expect(filePaths[0]).toContain('gemini-image-1-');
       expect(filePaths[1]).toContain('gemini-image-2-');
       
-      expect(mockFs.writeFile).toHaveBeenCalledTimes(4); // 2 images + 2 metadata files
+      expect(mockFs.writeFile).toHaveBeenCalledTimes(2); // 2 images only
     });
 
     it('should save multiple images with custom base filename', async () => {
@@ -167,21 +163,19 @@ describe('FileManager', () => {
       expect(filePaths[1]).toContain('custom-base-2-');
     });
 
-    it('should save multiple images with metadata', async () => {
+    it('should save multiple images with metadata (metadata not saved to file)', async () => {
       const metadata = { prompt: 'test prompt', model: 'test-model' };
       const filePaths = await fileManager.saveImages(mockImages, undefined, metadata);
       
       expect(filePaths).toHaveLength(2);
       
-      // Check that metadata was saved with correct index information
+      // Only image files should be saved, no JSON metadata files
       const writeFileCalls = mockFs.writeFile.mock.calls;
+      const imageCalls = writeFileCalls.filter(call => String(call[0]).includes('.png'));
       const metadataCalls = writeFileCalls.filter(call => String(call[0]).includes('.json'));
       
-      expect(metadataCalls).toHaveLength(2);
-      expect(metadataCalls[0][1]).toContain('"imageIndex": 1');
-      expect(metadataCalls[0][1]).toContain('"totalImages": 2');
-      expect(metadataCalls[1][1]).toContain('"imageIndex": 2');
-      expect(metadataCalls[1][1]).toContain('"totalImages": 2');
+      expect(imageCalls).toHaveLength(2);
+      expect(metadataCalls).toHaveLength(0);
     });
 
     it('should handle empty image array', async () => {

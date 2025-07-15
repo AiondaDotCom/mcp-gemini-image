@@ -77,7 +77,7 @@ export class GeminiImageServer {
     return [
       {
         name: 'generate-image',
-        description: 'Generate images using Google Gemini Imagen 4 model',
+        description: 'Generate images using Google Gemini 2.0 Flash experimental model',
         inputSchema: {
           type: 'object',
           properties: {
@@ -87,9 +87,9 @@ export class GeminiImageServer {
             },
             model: {
               type: 'string',
-              enum: ['imagen-4.0-generate-preview-06-06', 'imagen-4.0-ultra-generate-preview-06-06'],
+              enum: ['gemini-2.0-flash-exp'],
               description: 'Model to use for image generation',
-              default: 'imagen-4.0-generate-preview-06-06',
+              default: 'gemini-2.0-flash-exp',
             },
             aspect_ratio: {
               type: 'string',
@@ -183,6 +183,15 @@ export class GeminiImageServer {
 
     const result = await this.imageGenerator.generateImage(request);
     
+    // Format metadata for output
+    const metadataText = `Generation Metadata:\n` +
+      `• Model: ${result.metadata.model}\n` +
+      `• Prompt: ${result.metadata.prompt}\n` +
+      `• Aspect Ratio: ${result.metadata.aspect_ratio}\n` +
+      `• Number of Images: ${result.metadata.num_images}\n` +
+      `• Timestamp: ${result.metadata.timestamp}\n` +
+      `• Images Generated: ${result.images.length}`;
+    
     return {
       content: [
         {
@@ -191,7 +200,8 @@ export class GeminiImageServer {
                 `Prompt: ${result.metadata.prompt}\n` +
                 `Aspect Ratio: ${result.metadata.aspect_ratio}\n` +
                 `Files saved to:\n${result.filePaths.join('\n')}\n\n` +
-                `Images saved to: ${this.fileManager.getImageDirectory()}`,
+                `Images saved to: ${this.fileManager.getImageDirectory()}\n\n` +
+                metadataText,
         },
       ],
     };

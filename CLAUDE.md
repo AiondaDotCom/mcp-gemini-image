@@ -49,7 +49,7 @@ npm start             # Start the MCP server (requires build first)
 ### Environment Setup
 - Requires Node.js 18.0.0+
 - Uses ES modules (type: "module" in package.json)
-- TypeScript with strict mode enabled
+- TypeScript with strict mode enabled and ESNext module compilation
 
 ### API Configuration
 The server requires Google API credentials to function. Configuration is handled through:
@@ -71,6 +71,43 @@ Generated images are automatically saved to `~/Desktop/` with:
 - VPN connection to supported regions (US, UK) if not available locally
 - Google AI Studio API key with appropriate permissions
 - The model may not be available in all countries/regions
+
+### DXT Package Deployment
+- Uses DXT template variable `${__dirname}` for portable path resolution
+- Compatible with Claude Desktop DXT package system
+- ES modules work correctly with DXT when using template variables
+
+### DXT Package & Claude Desktop Compatibility
+
+**RESOLVED**: ES Modules work correctly with DXT template variables!
+
+**Previous Issue (SOLVED)**: The problem was not ES modules but hardcoded absolute paths in manifest.json
+
+**Solution**: Use DXT template variables for portable deployment:
+```json
+// manifest.json
+{
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"]  // Template variable resolves automatically
+    }
+  }
+}
+```
+
+**Key Benefits**:
+- ES modules work perfectly with DXT template variables
+- `${__dirname}` resolves to package installation directory
+- Modern import/export syntax is maintained
+- No need to convert to CommonJS
+
+**Debugging Tips**:
+- Always add `console.error()` statements at the very beginning of index.ts
+- Check `/Users/[user]/Library/Logs/Claude/mcp-server-[name].log` for output
+- Claude Desktop stores DXT packages in: `/Users/[user]/Library/Application Support/Claude/Claude Extensions/`
 
 ### Testing Framework
 - Uses Jest with ts-jest for TypeScript support

@@ -33,11 +33,6 @@ export class FileManager {
       const buffer = Buffer.from(imageData, 'base64');
       await fs.writeFile(filePath, buffer);
 
-      if (metadata) {
-        const metadataPath = join(this.baseDir, `${finalFilename}.json`);
-        await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
-      }
-
       return filePath;
     } catch (error) {
       console.error('Failed to save image:', error);
@@ -58,12 +53,7 @@ export class FileManager {
         ? `${baseFilename}-${i + 1}-${timestamp}.png`
         : `gemini-image-${i + 1}-${timestamp}.png`;
       
-      const filePath = await this.saveImage(images[i], filename, {
-        ...metadata,
-        imageIndex: i + 1,
-        totalImages: images.length
-      });
-      
+      const filePath = await this.saveImage(images[i], filename);
       filePaths.push(filePath);
     }
 

@@ -1,5 +1,10 @@
 # MCP Google Gemini Image Generation Server
 
+<div align="center">
+  <img src="./assets/mcp-gemini-image-logo.png" alt="MCP Gemini Image Logo" width="400">
+  <p><em>Logo generated using Google Gemini via this MCP server</em></p>
+</div>
+
 [![CI/CD Pipeline](https://github.com/AiondaDotCom/mcp-gemini-image/actions/workflows/ci.yml/badge.svg)](https://github.com/AiondaDotCom/mcp-gemini-image/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
