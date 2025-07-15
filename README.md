@@ -1,7 +1,6 @@
 # MCP Google Gemini Image Generation Server
 
-[![CI/CD Pipeline](https://github.com/YOUR_USERNAME/mcp-gemini-image/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/mcp-gemini-image/actions/workflows/ci.yml)
-[![Coverage Status](https://codecov.io/gh/YOUR_USERNAME/mcp-gemini-image/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/mcp-gemini-image)
+[![CI/CD Pipeline](https://github.com/AiondaDotCom/mcp-gemini-image/actions/workflows/ci.yml/badge.svg)](https://github.com/AiondaDotCom/mcp-gemini-image/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-blue)](https://www.typescriptlang.org/)
