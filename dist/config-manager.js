@@ -1,10 +1,13 @@
 import { promises as fs } from 'fs';
 import { join, dirname } from 'path';
-// Get config directory - use __dirname equivalent for ESM or fallback
+// Get config directory - use stable location for DXT extensions
 const getConfigDir = () => {
-    // Use process.cwd() based approach for better compatibility
-    // This works in both test and production environments
-    return join(process.cwd(), 'dist', 'config');
+    // Use a stable location in the user's home directory for DXT extensions
+    const homeDir = process.env.HOME || process.env.USERPROFILE || '.';
+    const configDir = join(homeDir, '.config', 'mcp-gemini-image');
+    console.error(`[ConfigManager] Using stable config directory: ${configDir}`);
+    console.error(`[ConfigManager] Current working directory: ${process.cwd()}`);
+    return configDir;
 };
 export class ConfigManager {
     config = {
@@ -57,34 +60,34 @@ export class ConfigManager {
     }
     async loadConfig() {
         try {
-            // Loading config from file
+            console.error(`[ConfigManager] Loading config from: ${this.configFilePath}`);
             const configData = await fs.readFile(this.configFilePath, 'utf-8');
             const savedConfig = JSON.parse(configData);
             if (savedConfig.apiKey) {
                 this.config.apiKey = savedConfig.apiKey;
-                // API key loaded successfully
+                console.error(`[ConfigManager] Loaded API key: ${this.config.apiKey.substring(0, 10)}...`);
             }
             if (savedConfig.projectId) {
                 this.config.projectId = savedConfig.projectId;
-                // Project ID loaded successfully
+                console.error(`[ConfigManager] Loaded project ID: ${this.config.projectId}`);
             }
         }
         catch (error) {
             // Config file doesn't exist or is invalid - use defaults
-            // Config file doesn't exist or is invalid - using defaults
+            console.error(`[ConfigManager] No config file found or invalid config: ${error}, using defaults`);
         }
     }
     async saveConfig() {
         try {
-            // Saving config to file
+            console.error(`[ConfigManager] Saving config to: ${this.configFilePath}`);
             // Ensure config directory exists
             await fs.mkdir(dirname(this.configFilePath), { recursive: true });
             const configData = JSON.stringify(this.config, null, 2);
             await fs.writeFile(this.configFilePath, configData, 'utf-8');
-            // Config saved successfully
+            console.error(`[ConfigManager] Config saved successfully`);
         }
         catch (error) {
-            // Failed to save config file
+            console.error(`[ConfigManager] Failed to save config file: ${error}`);
         }
     }
 }
