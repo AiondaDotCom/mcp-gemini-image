@@ -1,5 +1,5 @@
 {
-  "name": "mcp-gemini-image",
+  "name": "@aiondadotcom/mcp-gemini-image",
   "version": "1.0.0",
   "description": "MCP server for Google Gemini image generation with Imagen 4 support",
   "type": "module",
