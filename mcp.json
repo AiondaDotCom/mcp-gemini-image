@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mcp-gemini-image": {
+      "command": "node",
+      "args": ["dist/index.js"]
+    }
+  }
+}
