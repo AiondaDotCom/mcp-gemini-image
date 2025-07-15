@@ -1,13 +1,11 @@
 import { promises as fs } from 'fs';
-import { join, dirname } from 'path';
-// Get config directory - use stable location for DXT extensions
-const getConfigDir = () => {
-    // Use a stable location in the user's home directory for DXT extensions
-    const homeDir = process.env.HOME || process.env.USERPROFILE || '.';
-    const configDir = join(homeDir, '.config', 'mcp-gemini-image');
-    console.error(`[ConfigManager] Using stable config directory: ${configDir}`);
-    console.error(`[ConfigManager] Current working directory: ${process.cwd()}`);
-    return configDir;
+import { join } from 'path';
+// Get config file path - works on macOS, Linux, and Windows
+const getConfigFilePath = () => {
+    const homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH || '.';
+    const configFile = join(homeDir, '.mcp-gemini-image.json');
+    console.error(`[ConfigManager] Using config file: ${configFile}`);
+    return configFile;
 };
 export class ConfigManager {
     config = {
@@ -16,7 +14,7 @@ export class ConfigManager {
     };
     configFilePath;
     constructor() {
-        this.configFilePath = join(getConfigDir(), 'server-config.json');
+        this.configFilePath = getConfigFilePath();
         this.loadConfig();
     }
     async setConfig(config) {
@@ -80,8 +78,6 @@ export class ConfigManager {
     async saveConfig() {
         try {
             console.error(`[ConfigManager] Saving config to: ${this.configFilePath}`);
-            // Ensure config directory exists
-            await fs.mkdir(dirname(this.configFilePath), { recursive: true });
             const configData = JSON.stringify(this.config, null, 2);
             await fs.writeFile(this.configFilePath, configData, 'utf-8');
             console.error(`[ConfigManager] Config saved successfully`);
