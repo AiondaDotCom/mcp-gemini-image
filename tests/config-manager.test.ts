@@ -107,9 +107,8 @@ describe('ConfigManager', () => {
     it('should save config to file', async () => {
       await configManager.setConfig({ apiKey: 'test-key' });
       
-      expect(mockFs.mkdir).toHaveBeenCalled();
       expect(mockFs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('server-config.json'),
+        expect.stringContaining('.mcp-gemini-image.json'),
         JSON.stringify({ apiKey: 'test-key', projectId: undefined }, null, 2),
         'utf-8'
       );

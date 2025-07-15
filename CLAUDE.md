@@ -57,6 +57,8 @@ The server requires Google API credentials to function. Configuration is handled
 - Optional: `project_id` parameter for Google Cloud project ID
 - Credentials must be configured before using image generation tools
 - Tools `generate-image` and `list-supported-models` check for credentials and prompt for configuration if missing
+- **Configuration Storage**: Credentials are automatically saved to `~/.mcp-gemini-image.json` in the user's home directory and persist between server restarts
+- **Cross-Platform**: Configuration storage works on macOS, Linux, and Windows using appropriate environment variables
 
 ### Image Storage
 Generated images are automatically saved to `~/Desktop/` with:

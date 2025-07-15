@@ -41,6 +41,7 @@ A Model Context Protocol (MCP) server that provides Google Gemini image generati
 2. Enable the Generative AI API for your project
 3. Start the MCP server
 4. Use the `configure-server` tool to set your API key before generating images
+   - **Note**: Your API key will be automatically saved to `~/.mcp-gemini-image.json` for future use
 
 ## Usage
 
@@ -79,6 +80,8 @@ Configure Google API credentials.
 **Parameters:**
 - `api_key` (required): Your Google API key
 - `project_id` (optional): Your Google Cloud project ID
+
+**Note**: Credentials are automatically saved to `~/.mcp-gemini-image.json` and will persist between server restarts.
 
 **Example:**
 ```json
