@@ -40,7 +40,7 @@ describe('GeminiImageServer', () => {
     jest.clearAllMocks();
     
     mockConfigManager = {
-      setConfig: jest.fn(),
+      setConfig: jest.fn().mockResolvedValue(undefined),
       getConfigStatus: jest.fn(),
       getSupportedModels: jest.fn(),
       isConfigured: jest.fn(),
@@ -231,9 +231,7 @@ describe('GeminiImageServer', () => {
       });
 
       it('should handle configuration error', async () => {
-        mockConfigManager.setConfig.mockImplementation(() => {
-          throw new Error('Config error');
-        });
+        mockConfigManager.setConfig.mockRejectedValue(new Error('Config error'));
         
         const result = await toolHandler({
           method: 'tools/call',

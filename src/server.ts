@@ -208,7 +208,7 @@ export class GeminiImageServer {
   }
 
   private async handleConfigureServer(args: any) {
-    this.configManager.setConfig({
+    await this.configManager.setConfig({
       apiKey: args.api_key,
       projectId: args.project_id,
     });

@@ -1,13 +1,32 @@
 import { ConfigManager } from '../src/config-manager';
 import { GeminiConfig } from '../src/types';
+import { promises as fs } from 'fs';
+import { join } from 'path';
+
+// Mock fs operations
+jest.mock('fs', () => ({
+  promises: {
+    readFile: jest.fn(),
+    writeFile: jest.fn(),
+    mkdir: jest.fn(),
+  }
+}));
 
 describe('ConfigManager', () => {
   let configManager: ConfigManager;
+  const mockFs = fs as jest.Mocked<typeof fs>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     delete process.env.GOOGLE_API_KEY;
     delete process.env.GOOGLE_PROJECT_ID;
+    jest.clearAllMocks();
+    
+    // Mock readFile to simulate no config file exists
+    mockFs.readFile.mockRejectedValue(new Error('File not found'));
+    
     configManager = new ConfigManager();
+    // Wait for async constructor to complete
+    await new Promise(resolve => setTimeout(resolve, 0));
   });
 
   afterEach(() => {
@@ -35,56 +54,71 @@ describe('ConfigManager', () => {
   });
 
   describe('setConfig', () => {
-    it('should set API key when provided', () => {
+    it('should set API key when provided', async () => {
       const newConfig: Partial<GeminiConfig> = {
         apiKey: 'new-api-key'
       };
       
-      configManager.setConfig(newConfig);
+      await configManager.setConfig(newConfig);
       const config = configManager.getConfig();
       
       expect(config.apiKey).toBe('new-api-key');
+      expect(mockFs.writeFile).toHaveBeenCalled();
     });
 
-    it('should set project ID when provided', () => {
+    it('should set project ID when provided', async () => {
       const newConfig: Partial<GeminiConfig> = {
         projectId: 'new-project-id'
       };
       
-      configManager.setConfig(newConfig);
+      await configManager.setConfig(newConfig);
       const config = configManager.getConfig();
       
       expect(config.projectId).toBe('new-project-id');
+      expect(mockFs.writeFile).toHaveBeenCalled();
     });
 
-    it('should set both API key and project ID when provided', () => {
+    it('should set both API key and project ID when provided', async () => {
       const newConfig: Partial<GeminiConfig> = {
         apiKey: 'new-api-key',
         projectId: 'new-project-id'
       };
       
-      configManager.setConfig(newConfig);
+      await configManager.setConfig(newConfig);
       const config = configManager.getConfig();
       
       expect(config.apiKey).toBe('new-api-key');
       expect(config.projectId).toBe('new-project-id');
+      expect(mockFs.writeFile).toHaveBeenCalled();
     });
 
-    it('should not change existing values when undefined is passed', () => {
-      configManager.setConfig({ apiKey: 'initial-key' });
-      configManager.setConfig({ projectId: 'initial-project' });
+    it('should not change existing values when undefined is passed', async () => {
+      await configManager.setConfig({ apiKey: 'initial-key' });
+      await configManager.setConfig({ projectId: 'initial-project' });
       
-      configManager.setConfig({});
+      await configManager.setConfig({});
       const config = configManager.getConfig();
       
       expect(config.apiKey).toBe('initial-key');
       expect(config.projectId).toBe('initial-project');
+      expect(mockFs.writeFile).toHaveBeenCalledTimes(3);
+    });
+
+    it('should save config to file', async () => {
+      await configManager.setConfig({ apiKey: 'test-key' });
+      
+      expect(mockFs.mkdir).toHaveBeenCalled();
+      expect(mockFs.writeFile).toHaveBeenCalledWith(
+        expect.stringContaining('server-config.json'),
+        JSON.stringify({ apiKey: 'test-key', projectId: undefined }, null, 2),
+        'utf-8'
+      );
     });
   });
 
   describe('getConfig', () => {
-    it('should return a copy of the config', () => {
-      configManager.setConfig({ apiKey: 'test-key' });
+    it('should return a copy of the config', async () => {
+      await configManager.setConfig({ apiKey: 'test-key' });
       const config1 = configManager.getConfig();
       const config2 = configManager.getConfig();
       
@@ -98,13 +132,13 @@ describe('ConfigManager', () => {
       expect(configManager.isConfigured()).toBe(false);
     });
 
-    it('should return false when API key is empty string', () => {
-      configManager.setConfig({ apiKey: '' });
+    it('should return false when API key is empty string', async () => {
+      await configManager.setConfig({ apiKey: '' });
       expect(configManager.isConfigured()).toBe(false);
     });
 
-    it('should return true when API key is set', () => {
-      configManager.setConfig({ apiKey: 'test-key' });
+    it('should return true when API key is set', async () => {
+      await configManager.setConfig({ apiKey: 'test-key' });
       expect(configManager.isConfigured()).toBe(true);
     });
   });
@@ -119,8 +153,8 @@ describe('ConfigManager', () => {
       expect(status.availableModels).toHaveLength(1);
     });
 
-    it('should return correct status when only API key is set', () => {
-      configManager.setConfig({ apiKey: 'test-key' });
+    it('should return correct status when only API key is set', async () => {
+      await configManager.setConfig({ apiKey: 'test-key' });
       const status = configManager.getConfigStatus();
       
       expect(status.configured).toBe(true);
@@ -129,8 +163,8 @@ describe('ConfigManager', () => {
       expect(status.availableModels).toHaveLength(1);
     });
 
-    it('should return correct status when both API key and project ID are set', () => {
-      configManager.setConfig({ apiKey: 'test-key', projectId: 'test-project' });
+    it('should return correct status when both API key and project ID are set', async () => {
+      await configManager.setConfig({ apiKey: 'test-key', projectId: 'test-project' });
       const status = configManager.getConfigStatus();
       
       expect(status.configured).toBe(true);
@@ -162,18 +196,47 @@ describe('ConfigManager', () => {
       }).toThrow('Google API key is required. Please configure it using the configure-server tool.');
     });
 
-    it('should throw error when API key is empty string', () => {
-      configManager.setConfig({ apiKey: '' });
+    it('should throw error when API key is empty string', async () => {
+      await configManager.setConfig({ apiKey: '' });
       expect(() => {
         configManager.validateConfig();
       }).toThrow('Google API key is required. Please configure it using the configure-server tool.');
     });
 
-    it('should not throw error when API key is set', () => {
-      configManager.setConfig({ apiKey: 'test-key' });
+    it('should not throw error when API key is set', async () => {
+      await configManager.setConfig({ apiKey: 'test-key' });
       expect(() => {
         configManager.validateConfig();
       }).not.toThrow();
+    });
+  });
+
+  describe('loadConfig', () => {
+    it('should load config from file if it exists', async () => {
+      const mockConfigData = {
+        apiKey: 'saved-api-key',
+        projectId: 'saved-project-id'
+      };
+      
+      mockFs.readFile.mockResolvedValueOnce(JSON.stringify(mockConfigData));
+      
+      const newConfigManager = new ConfigManager();
+      await new Promise(resolve => setTimeout(resolve, 10)); // Wait for async loadConfig
+      
+      const config = newConfigManager.getConfig();
+      expect(config.apiKey).toBe('saved-api-key');
+      expect(config.projectId).toBe('saved-project-id');
+    });
+
+    it('should handle missing config file gracefully', async () => {
+      mockFs.readFile.mockRejectedValueOnce(new Error('File not found'));
+      
+      const newConfigManager = new ConfigManager();
+      await new Promise(resolve => setTimeout(resolve, 10)); // Wait for async loadConfig
+      
+      const config = newConfigManager.getConfig();
+      expect(config.apiKey).toBe('');
+      expect(config.projectId).toBeUndefined();
     });
   });
 });

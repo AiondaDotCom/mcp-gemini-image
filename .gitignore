@@ -26,6 +26,7 @@ Thumbs.db
 config.json
 server-config.json
 .config/
+dist/config/
 
 # Logs
 *.log

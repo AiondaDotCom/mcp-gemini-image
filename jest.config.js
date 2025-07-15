@@ -6,7 +6,11 @@ export default {
   testMatch: ['**/*.test.ts'],
   transform: {
     '^.+\\.ts$': ['ts-jest', {
-      useESM: true
+      useESM: true,
+      tsconfig: {
+        module: 'esnext',
+        target: 'es2022'
+      }
     }]
   },
   moduleNameMapper: {
